@@ -1,0 +1,80 @@
+[
+  {
+    "name": "黒のダウンジャケット",
+    "type": "ダウンジャケット",
+    "category": "Outerwear",
+    "image_path": "closet_images/kuro_down.jpg"
+  },
+  {
+    "name": "グレーのセーター",
+    "type": "セーター",
+    "category": "Tops",
+    "image_path": "closet_images/grey_sweater.jpg"
+  },
+  {
+    "name": "ベージュのコート",
+    "type": "コート",
+    "category": "Outerwear",
+    "image_path": "closet_images/beige_coat.jpg"
+  },
+  {
+    "name": "お気に入りのパーカー",
+    "type": "パーカー",
+    "category": "Tops",
+    "image_path": "closet_images/fav_parka.jpg"
+  },
+  {
+    "name": "白のTシャツ",
+    "type": "Tシャツ",
+    "category": "Tops",
+    "image_path": "closet_images/white_tshirt.jpg"
+  },
+  {
+    "name": "ブルージーンズ",
+    "type": "ジーンズ",
+    "category": "Bottoms",
+    "image_path": "closet_images/blue_jeans.jpg"
+  },
+  {
+    "name": "黒のスキニーパンツ",
+    "type": "ロングパンツ",
+    "category": "Bottoms",
+    "image_path": "closet_images/black_skinny.jpg"
+  },
+  {
+    "name": "白のスニーカー",
+    "type": "スニーカー",
+    "category": "Other",
+    "image_path": "closet_images/white_sneaker.jpg"
+  },
+  {
+    "name": "赤のマフラー",
+    "type": "マフラー",
+    "category": "Accessory",
+    "image_path": "closet_images/red_muffler.jpg"
+  },
+  {
+    "name": "デニムのショートパンツ",
+    "type": "ショートパンツ",
+    "category": "Bottoms",
+    "image_path": "closet_images/denim_shorts.jpg"
+  },
+  {
+    "name": "麦わら帽子",
+    "type": "麦わら帽子",
+    "category": "Accessory",
+    "image_path": "closet_images/straw_hat.jpg"
+  },
+  {
+    "name": "Acneのマフラー",
+    "type": "マフラー",
+    "category": "Accessory",
+    "image_path": "closet_images/1.jpg"
+  },
+  {
+    "name": "青いセーター",
+    "type": "セーター",
+    "category": "Tops",
+    "image_path": "closet_images/2.jpeg"
+  }
+]

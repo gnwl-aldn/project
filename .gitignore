@@ -8,3 +8,14 @@ wheels/
 
 # Virtual environments
 .venv
+
+# ignore environment variable files
+.env
+
+# ignore model weights
+*.ckpt
+*.pt
+*.pth
+
+# ignore datasets
+data/

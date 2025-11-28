@@ -2,6 +2,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
+import torchvision.transforms as transforms
+
 import wandb
 
 # GPU・最適化アルゴリズムの設定
@@ -20,6 +22,18 @@ wandb.init(
         "learning_rate": 1e-2,
     },)
 
+
+# wandb の初期化
+wandb.init(
+    project="unet_training",
+    name="unet_run1"
+    config={
+        "epochs": 5,
+        "batch_size": 64,
+        "learning_rate": 1e-2,
+    },)
+
+>>>>>>> eb0058fabecfd8e1b0a923294b9aa1a2e0e7cb30
 config = wandb.config
 
 n = 0
