@@ -33,7 +33,6 @@ wandb.init(
         "learning_rate": 1e-2,
     },)
 
->>>>>>> eb0058fabecfd8e1b0a923294b9aa1a2e0e7cb30
 config = wandb.config
 
 n = 0
