@@ -4,7 +4,7 @@ import torch.nn.functional as F
 import torch.optim as optim
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
-from segmentation import fashionpedia
+import fashionpedia
 from model import UNet
 import wandb
 import os
@@ -12,11 +12,6 @@ import os
 # デバイス設定
 # GPUがあればGPUで学習、なければCPUで実行
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-# モデル・最適化・損失関数の設定
-unet = UNet().to(device)
-optimizer = torch.optim.Adam(unet.parameters(), lr=0.001)
-criterion = nn.CrossEntropyLoss()
 
 
 # wandb の初期化
@@ -45,6 +40,11 @@ val_dataset = fashionpedia.Dataset(IMG_SIZE, VAL_CSV, IMG_DIR)
 
 train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=4)
 val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False)
+
+# モデル・最適化・損失関数の設定
+unet = UNet().to(device)
+optimizer = torch.optim.Adam(unet.parameters(), lr=config.learning_rate)
+criterion = nn.CrossEntropyLoss()
 
 
 # 学習ループ
