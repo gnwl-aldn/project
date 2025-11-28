@@ -1,0 +1,28 @@
+{
+  "os": "Windows-11-10.0.26200-SP0",
+  "python": "CPython 3.13.9",
+  "startedAt": "2025-11-28T06:39:56.323331Z",
+  "program": "C:\\Users\\miu06\\project\\kikai1\\01\\wandb_sample.py",
+  "codePath": "kikai1\\01\\wandb_sample.py",
+  "codePathLocal": "wandb_sample.py",
+  "git": {
+    "remote": "https://github.com/gnwl-aldn/project.git",
+    "commit": "6ba6517adb263804609a2027834b76fdf66fec38"
+  },
+  "email": "miu.fujita0615@gmail.com",
+  "root": "C:\\Users\\miu06\\project\\kikai1\\01",
+  "host": "ふじみうのPC",
+  "executable": "C:\\Users\\miu06\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+  "cpu_count": 8,
+  "cpu_count_logical": 16,
+  "disk": {
+    "/": {
+      "total": "488799989760",
+      "used": "101603696640"
+    }
+  },
+  "memory": {
+    "total": "16438382592"
+  },
+  "writerId": "um8hgjmpwtddsodbrljzm813w9wn22w8"
+}

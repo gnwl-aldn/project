@@ -1,0 +1,52 @@
+_wandb:
+    value:
+        cli_version: 0.23.0
+        e:
+            um8hgjmpwtddsodbrljzm813w9wn22w8:
+                codePath: kikai1\01\wandb_sample.py
+                codePathLocal: wandb_sample.py
+                cpu_count: 8
+                cpu_count_logical: 16
+                disk:
+                    /:
+                        total: "488799989760"
+                        used: "101603696640"
+                email: miu.fujita0615@gmail.com
+                executable: C:\Users\miu06\AppData\Local\Programs\Python\Python313\python.exe
+                git:
+                    commit: 6ba6517adb263804609a2027834b76fdf66fec38
+                    remote: https://github.com/gnwl-aldn/project.git
+                host: ふじみうのPC
+                memory:
+                    total: "16438382592"
+                os: Windows-11-10.0.26200-SP0
+                program: C:\Users\miu06\project\kikai1\01\wandb_sample.py
+                python: CPython 3.13.9
+                root: C:\Users\miu06\project\kikai1\01
+                startedAt: "2025-11-28T06:39:56.323331Z"
+                writerId: um8hgjmpwtddsodbrljzm813w9wn22w8
+        m: []
+        python_version: 3.13.9
+        t:
+            "1":
+                - 1
+                - 41
+            "2":
+                - 1
+                - 41
+            "3":
+                - 2
+                - 13
+                - 16
+            "4": 3.13.9
+            "5": 0.23.0
+            "8":
+                - 3
+            "12": 0.23.0
+            "13": windows-amd64
+batch_size:
+    value: 64
+epochs:
+    value: 5
+learning_rate:
+    value: 0.01

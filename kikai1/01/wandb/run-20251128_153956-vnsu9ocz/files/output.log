@@ -1,0 +1,5 @@
+Epoch 1: Train Loss=0.7751, Train Acc=0.7991 | Test Loss=0.2412, Test Acc=0.9325
+Epoch 2: Train Loss=0.2068, Train Acc=0.9383 | Test Loss=0.1653, Test Acc=0.9491
+Epoch 3: Train Loss=0.1363, Train Acc=0.9593 | Test Loss=0.1195, Test Acc=0.9651
+Epoch 4: Train Loss=0.1020, Train Acc=0.9701 | Test Loss=0.0931, Test Acc=0.9733
+Epoch 5: Train Loss=0.0828, Train Acc=0.9752 | Test Loss=0.0649, Test Acc=0.9791
