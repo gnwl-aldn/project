@@ -9,6 +9,7 @@ from model import UNet
 import wandb
 import os
 
+
 # デバイス設定
 # GPUがあればGPUで学習、なければCPUで実行
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -51,8 +52,8 @@ criterion = nn.CrossEntropyLoss()
 for epoch in range(config.epochs):
     train_loss = 0
     val_loss = 0
-    n = 0   # 学習バッチ数
-    m = 0   # 検証バッチ数
+    # n = 0   # 学習バッチ数
+    # m = 0   # 検証バッチ数
 
     unet.train()
     for i, data in train_loader:
@@ -65,14 +66,16 @@ for epoch in range(config.epochs):
         loss.backward()
         optimizer.step()
 
-        train_loss += loss.item()
-        n += 1
+        # train_loss += loss.item()
+        # n += 1
+        # バッチごとの学習損失をwandbに記録
         wandb.log({"train_loss_batch": loss.item()})
 
-    # 学習損失の平均を計算してログに記録
-    avg_train_loss = train_loss / n
-    print(f"epoch:{epoch+1} train_loss:{avg_train_loss:.5f}")
-    wandb.log({"train_loss": avg_train_loss, "epoch": epoch+1})
+    # # 学習損失の平均を計算してログに記録
+    # avg_train_loss = train_loss / n
+    # print(f"epoch:{epoch+1} train_loss:{avg_train_loss:.5f}")
+    # wandb.log({"train_loss": avg_train_loss, "epoch": epoch+1})
+    
     
 
     # 検証ループ
@@ -84,13 +87,16 @@ for epoch in range(config.epochs):
 
             outputs = unet(inputs)
             loss = criterion(outputs, labels)
-            val_loss += loss.item()
-            m += 1
 
-    # 検証損失の平均を計算してログに記録
-    avg_val_loss = val_loss / m
-    print(f"epoch:{epoch+1} val_loss:{avg_val_loss:.5f}")
-    wandb.log({"val_loss": avg_val_loss, "epoch": epoch+1})
+            # val_loss += loss.item()
+            # m += 1
+
+            # バッチごとの検証損失をwandbに記録
+            wandb.log({"val_loss_batch": loss.item()})
+
+    # # 検証損失の平均を計算してログに記録
+    # avg_val_loss = val_loss / m
+    # print(f"epoch:{epoch+1} val_loss:{avg_val_loss:.5f}")
 
 
     # モデル保存
