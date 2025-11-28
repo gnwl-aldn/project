@@ -3,14 +3,20 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 import torchvision.transforms as transforms
-
+from torch.utils.data import DataLoader
+from segmentation import fashionpedia
+from model import UNet
 import wandb
+import os
 
 # GPU・最適化アルゴリズムの設定
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-unet = UNet_2D().to(device)
+
+# UNetモデルの定義
+unet = UNet().to(device)
 optimizer = torch.optim.Adam(unet.parameters(), lr=0.001)
 criterion = nn.CrossEntropyLoss()
+
 
 # wandb の初期化
 wandb.init(
@@ -20,73 +26,66 @@ wandb.init(
         "epochs": 5,
         "batch_size": 64,
         "learning_rate": 1e-2,
-    },)
-
-
-# wandb の初期化
-wandb.init(
-    project="unet_training",
-    name="unet_run1"
-    config={
-        "epochs": 5,
-        "batch_size": 64,
-        "learning_rate": 1e-2,
-    },)
+    },
+)
 
 config = wandb.config
+BATCH_SIZE = config.batch_size
 
-n = 0
-m = 0
+
+# データセット・データローダーの準備
+IMG_SIZE = (256, 256)
+TRAIN_CSV = "./train.csv"
+VAL_CSV = "./val.csv"
+IMG_DIR = "./train/"
+
+train_dataset = fashionpedia.Dataset(IMG_SIZE, TRAIN_CSV, IMG_DIR)
+val_dataset = fashionpedia.Dataset(IMG_SIZE, VAL_CSV, IMG_DIR)
+
+train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=4)
+val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False)
 
 
 # 学習ループ
 for epoch in range(config.epochs):
     train_loss = 0
     val_loss = 0
+    n = 0
+    m = 0
 
     unet.train()
-    for i, data in enumerate(train_loader):
-        inputs, labels = data["img"].to(device), data["label"].to(device)
+    for i, data in train_loader:
+        inputs, labels = data
+        inputs, labels = inputs.to(device), labels.to(device)
+
         optimizer.zero_grad()
         outputs = unet(inputs)
         loss = criterion(outputs, labels)
         loss.backward()
         optimizer.step()
+
         train_loss += loss.item()
         n += 1
-
         wandb.log({"train_loss_batch": loss.item()})
 
-        if i % ((len(df)//BATCH_SIZE)//10) == (len(df)//BATCH_SIZE)//10 - 1:
-            print(f"{epoch+1} index:{i+1} train_loss:{train_loss/n:.5f}")
-
-            wandb.log({"train_loss": avg_loss, "epoch": epoch+1})
-
-            n = 0
-            train_loss = 0
-            train_acc = 0
-
+    avg_train_loss = train_loss / n
+    print(f"epoch:{epoch+1} train_loss:{avg_train_loss:.5f}")
+    wandb.log({"train_loss": avg_train_loss, "epoch": epoch+1})
     
     unet.eval()
     with torch.no_grad():
-        for i, data in enumerate(val_loader):
-            inputs, labels = data["img"].to(device), data["label"].to(device)
+        for data in val_loader:
+            inputs, labels = data
+            inputs, labels = inputs.to(device), labels.to(device)
+
             outputs = unet(inputs)
             loss = criterion(outputs, labels)
             val_loss += loss.item()
             m += 1
 
-            wandb.log({"val_loss_batch": loss.item()})
-
-            if i % (len(val_df)//BATCH_SIZE) == len(val_df)//BATCH_SIZE - 1:
-                print(f"epoch:{epoch+1} index:{i+1} val_loss:{val_loss/m:.5f}")
-
-                wandb.log({"val_loss": avg_val_loss, "epoch": epoch+1})
-
-                m = 0
-                val_loss = 0
-                val_acc = 0
-
+    avg_val_loss = val_loss / m
+    print(f"epoch:{epoch+1} val_loss:{avg_val_loss:.5f}")
+    wandb.log({"val_loss": avg_val_loss, "epoch": epoch+1})
 
     # モデル保存
     torch.save(unet.state_dict(), f"./train_{epoch+1}.pth")
