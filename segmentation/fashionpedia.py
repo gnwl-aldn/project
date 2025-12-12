@@ -5,6 +5,7 @@ from PIL import Image
 import torch
 from torch.utils.data import Dataset
 from torchvision import transforms
+from typing import List
 
 class Resizer:
     def __init__(self, size):
@@ -58,10 +59,10 @@ def rle_decode(rle, H, W, fill_value=1):
         mask[start:start + length] = fill_value
     
     # H x W の形状に戻し、転置して (H, W) 形式にする (Fashion-Pediaの形式に合わせる)
-    # RLEは通常、列方向に走査される
-    return mask.reshape((W, H)).T
+    # RLEは通常、列方向に走査される <- これ正しい？
+    return mask.reshape((W,H)).T
 
-def create_segmentation_mask(df_rows, img_path):
+def create_segmentation_mask(df_rows, img_path, use_ids:List[int]=[]):
     """
     画像に存在する全てのアノテーションを統合し、カテゴリIDのマスクを作成します。
 
@@ -78,15 +79,18 @@ def create_segmentation_mask(df_rows, img_path):
     
     # 全てゼロ（背景）で初期化されたマスク。U-Netのターゲットは通常、
     # [H, W] の形状で、各ピクセルがカテゴリIDを持ちます。
-    # ここでは、背景をクラスID 0 とします。
-    # Fashion-PediaのカテゴリIDは1から始まるため、背景は0です。
-    mask = np.zeros((H, W), dtype=np.int64)
+    # ここでは、背景をクラスID n+1 とします。
+    background_id = len(use_ids)
+    mask = np.full((H, W), background_id, dtype=np.int64)
     
     # 各アノテーション行を反復処理
     # (注意: DataFrameの行は元のCSVの順番で処理されます)
     for _, row in df_rows.iterrows():
         rle = row['EncodedPixels']
         class_id = int(row['ClassId'])
+
+        if not (class_id in use_ids):
+            continue
         
         # RLEをデコードしてバイナリマスクを取得
         # fill_value に class_id を渡すことで、デコード時にそのカテゴリIDで領域を塗りつぶします
@@ -100,7 +104,7 @@ def create_segmentation_mask(df_rows, img_path):
     return mask
 
 class Dataset(Dataset):
-    def __init__(self, img_size:int, csv_file, img_dir):
+    def __init__(self, img_size:int, csv_file, img_dir, use_ids:List[int]=[]):
         """
         Args:
             img_size (int): 画像とマスクのリサイズ後のサイズ (例: 256)
@@ -109,6 +113,7 @@ class Dataset(Dataset):
         """
         self.data_df = pd.read_csv(csv_file)
         self.img_dir = img_dir
+        self.use_ids = use_ids
         self.resizer = Resizer((img_size, img_size))
         
         # ImageIdごとにアノテーションをグループ化し、一意の画像IDのリストを作成
@@ -119,6 +124,8 @@ class Dataset(Dataset):
         self.grouped = self.data_df.groupby('ImageId')
         
         self.to_tensor = transforms.ToTensor()
+        self.normalization = transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                                  std=[0.229, 0.224, 0.225])
 
     def __len__(self):
         return len(self.image_ids)
@@ -136,7 +143,7 @@ class Dataset(Dataset):
         # そのImageIdに対応する全てのアノテーション行を取得
         df_rows = self.grouped.get_group(image_id)
         # RLEデコードと統合により、セグメンテーションマスク (H x W, np.int64) を作成
-        mask_np = create_segmentation_mask(df_rows, img_path)
+        mask_np = create_segmentation_mask(df_rows, img_path, use_ids=self.use_ids)  # np.int64
         
         # 4. 画像への変換の適用
         if self.resizer:
@@ -144,6 +151,7 @@ class Dataset(Dataset):
         
         # 画像のテンソル化
         image_tensor = self.to_tensor(image)  # [C, H, W], float32
+        image_tensor = self.normalization(image_tensor)
 
         # 5. マスクのテンソル化
         # マスクは [H, W] の形状で、型は LongTensor (カテゴリID用) にします。
